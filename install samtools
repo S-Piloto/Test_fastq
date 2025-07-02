@@ -28,3 +28,7 @@ cd ..
 ./configure --prefix=/usr/local --with-htslib=htslib
 make
 sudo make install
+
+
+
+./configure --prefix=/usr/local --with-htslib=../htslib
