@@ -1,0 +1,31 @@
+dorado basecaller dna_r10.4.1_e8.2_sup \
+  /path/to/pod5_dir/ \
+  --emit-moves \
+  --emit-fastq \
+  > dorado_calls.bam
+
+
+
+samtools sort -@ 8 -o dorado_calls.sorted.bam dorado_calls.bam
+samtools index dorado_calls.sorted.bam
+
+
+
+remora infer from_pod5_and_bam \
+  /path/to/pod5_dir/ \
+  dorado_calls.sorted.bam \
+  --model /path/to/remora/models/dna_r10.4.1_e8.2_sup_5mCG@v1.pt \
+  --reference /path/to/reference.fa \
+  --reference-anchored \
+  --out-file dorado_remora.bam \
+  --log-filename remora.log \
+  --device 0
+
+
+megalodon_extras aggregate \
+  --input dorado_remora.bam \
+  --output-site-frequency dorado_5mC_per_site.tsv \
+  --mod-bases m \
+  --motif CG
+
+
