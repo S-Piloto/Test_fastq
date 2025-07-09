@@ -1,0 +1,10 @@
+# ensure Bioconda channels are set up
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+
+# install Guppy
+conda install -c bioconda ont-guppy
+
+# verify
+guppy_basecaller --version
