@@ -1,0 +1,3 @@
+samtools merge - /path/to/align_out/*.bam \
+  | samtools sort -@8 -o merged.sorted.bam
+samtools index merged.sorted.bam 
