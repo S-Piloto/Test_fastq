@@ -40,3 +40,6 @@ dorado basecaller \
   --emit-fastq \
   --emit-moves \
   > basecalls.bam
+
+
+mkdir -p /mnt/d/projects/fragilex_methylation/{raw_data,models,output,logs}
