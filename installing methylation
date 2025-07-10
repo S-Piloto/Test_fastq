@@ -82,4 +82,18 @@ guppy_basecall_server --help
 
 
 
+dorado download \
+  --model dna_r10.4.1_e8.2_400bps_sup@v5.2.0 \
+  --models-directory ~/dorado_models
+
+
+
+dorado download --model all --models-directory ~/dorado_models 
+
+
+
+dorado download \
+  --model dna_r10.4.1_e8.2_400bps_sup@v5.2.0 \
+  --models-directory $HOME/dorado_models
+
 
