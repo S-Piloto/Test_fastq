@@ -1,33 +1,41 @@
-# Basecall + signal moves + BAM output
-dorado basecaller dna_r10.4.1_e8.2_sup \
-  /path/to/pod5_dir/ \
-  --emit-moves \
-  --emit-fastq \
+# 1. Download the latest sup_modbases 5mC CpG model for Dorado
+
+dorado download \
+  --model dna_r10.4.1_e8.2_sup_modbases_5mc_CpG@vX.Y.Z \
+  --models-directory $HOME/dorado_models
+
+
+# 2. Basecall + methylation-aware signal moves with Dorado
+
+dorado basecaller \
+  dna_r10.4.1_e8.2_sup_modbases_5mc_CpG@vX.Y.Z \
+  /path/to/pod5_dir \
+  --models-directory $HOME/dorado_models \
+  --emit-moves --emit-fastq \
   > dorado_calls.bam
 
 
+# 3. Sort & index your basecalled BAM
+samtools sort -@8 -o dorado_calls.sorted.bam dorado_calls.bam
+samtools index -@8 dorado_calls.sorted.bam
 
-samtools sort -@ 8 -o dorado_calls.sorted.bam dorado_calls.bam
-samtools index dorado_calls.sorted.bam
-
-
-
+# 4. Activate your methylation env & run Remora
+conda activate methylation    # or: source ~/remora-venv/bin/activate
 remora infer from_pod5_and_bam \
-  /path/to/pod5_dir/ \
+  /path/to/pod5_dir \
   dorado_calls.sorted.bam \
-  --model /path/to/remora/models/dna_r10.4.1_e8.2_sup_5mCG@v1.pt \
-  --reference /path/to/reference.fa \
+  --model dna_r10.4.1_e8.2_sup_5mCG@v1.pt \
+  --reference /path/to/hg38.fa \
   --reference-anchored \
   --out-file dorado_remora.bam \
-  --log-filename remora.log \
   --device 0
+conda deactivate
 
-
-
-
+# 5. Aggregate genome-wide 5mC frequencies with Megalodon extras
+conda activate methylation
 megalodon_extras aggregate \
   --input dorado_remora.bam \
-  --output-site-frequency dorado_5mC_per_site.tsv \
+  --output-site-frequency all_sites.tsv \
   --mod-bases m \
   --motif CG
 
