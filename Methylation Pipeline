@@ -35,3 +35,46 @@ megalodon_extras aggregate \
 
 
 
+
+
+
+
+
+
+### Dorado Basecalling for CGG Repeat Methylation
+
+Below is the exact Bash snippet you can copy and paste into your WSL2 terminal. Just adjust the drive letters and paths to match your setup.
+
+```bash
+# Create folders for models and output (on the D: drive mounted at /mnt/d)
+mkdir -p /mnt/d/projects/fragilex_methylation/models
+mkdir -p /mnt/d/projects/fragilex_methylation/output
+
+# 1. Download the latest R10.4 "sup_modbases" 5mC CpG model into your models folder
+# Replace v5.2.0 with the most recent version listed by `dorado download --list`
+
+dorado download \
+  --model dna_r10.4.1_e8.2_sup_modbases_5mc_CpG@v5.2.0 \
+  --models-directory /mnt/d/projects/fragilex_methylation/models
+
+# 2. Run Dorado basecaller to emit FASTQ and move tables in a BAM
+# Point to your raw POD5/FAST5 data and reference genome
+
+dorado basecaller \
+  dna_r10.4.1_e8.2_sup_modbases_5mc_CpG@v5.2.0 \
+  /mnt/d/projects/fragilex_methylation/raw_data \
+  --models-directory /mnt/d/projects/fragilex_methylation/models \
+  --emit-moves \
+  --emit-fastq \
+  --reference /mnt/d/projects/fragilex_methylation/references/hg38.fa \
+  > /mnt/d/projects/fragilex_methylation/output/dorado_calls.bam
+
+# After this completes, you will find:
+# - /mnt/d/projects/fragilex_methylation/models/<model_name>/ (model files)
+# - /mnt/d/projects/fragilex_methylation/output/dorado_calls.bam (basecalled reads with moves)
+
+# Next steps: sort/index the BAM, then run Remora and aggregate methylation.
+```
+
+
+
