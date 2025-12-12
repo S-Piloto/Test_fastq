@@ -1,0 +1,1 @@
+modkit extract calls --reference genome/GRCh38.fa --region X:147851919-147951125 --cpg output/41530/41530.sorted.bam methylation/modkit/out/41530_methylation.tsv
